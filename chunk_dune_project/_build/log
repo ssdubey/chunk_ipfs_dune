@@ -1,8 +1,0 @@
-# dune exec code/main.exe
-# OCAMLPARAM: unset
-$ /usr/bin/nproc > /tmp/dune4c281f.output 2> /dev/null
-$ /usr/bin/ocamlc.opt -config > /tmp/dunea6f790.output
-$ (cd _build/default && /usr/bin/ocamlc.opt -w @a-4-29-40-41-42-44-45-48-58-59-60-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I code/chunk/.chunk.objs -I code/chunk/.chunk.objs/.private -no-alias-deps -opaque -o code/chunk/.chunk.objs/chunk.cmi -c -intf code/chunk/chunk.mli)
-> File "code/chunk/chunk.mli", line 3, characters 12-25:
-> Error: Unbound module CBOR
-[2]
