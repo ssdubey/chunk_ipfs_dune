@@ -1,0 +1,7 @@
+"Rule: ocaml dependencies mli (%=code/chunk/chunk )": "\022\142\218\243:(8f\n\134x\029\171\0053v"
+"Resource: /home/shashank/work/chunked_ipfs/dune_project/code/main.ml": "\142W\160\022\bo\254Ml\1607:\222\167rk"
+"Resource: /home/shashank/work/chunked_ipfs/dune_project/code/chunk/chunk.mli": "\194{\158)\031\006@\030\233\221\001\028Z\152\191I"
+"Rule: ocaml dependencies ml (%=code/chunk/chunk )": "\168<\201\020U\028\236w }\167\218P&q\237"
+"Resource: /home/shashank/work/chunked_ipfs/dune_project/code/chunk/chunk.ml": "\147q\245\144}\191k>\131~\149l\169\252\0224"
+"Rule: ocaml: mli -> cmi (%=code/chunk/chunk )": "\247}_\224\139 \131?@\182\192kWh\001\172"
+"Rule: ocaml dependencies ml (%=code/main )": "\165\162\238,G\138\158\230[\191\158LH\238\231\223"

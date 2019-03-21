@@ -1,0 +1,22 @@
+### Starting build.
+# Target: code/chunk/chunk.ml.depends, tags: { extension:ml, file:code/chunk/chunk.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules code/chunk/chunk.ml > code/chunk/chunk.ml.depends # cached
+# Target: code/chunk/chunk.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:code/chunk/chunk.cmo, file:code/chunk/chunk.ml, implem, ocaml, quiet }
+ocamlc.opt -c -I /home/shashank/.opam/system/lib/bytes -I /home/shashank/.opam/system/lib/cbor -I /home/shashank/.opam/system/lib/ocplib-endian -I code/chunk -o code/chunk/chunk.cmo code/chunk/chunk.ml
++ ocamlc.opt -c -I /home/shashank/.opam/system/lib/bytes -I /home/shashank/.opam/system/lib/cbor -I /home/shashank/.opam/system/lib/ocplib-endian -I code/chunk -o code/chunk/chunk.cmo code/chunk/chunk.ml
+File "code/chunk/chunk.ml", line 51, characters 10-108:
+Warning 21: this statement never returns (or has an unsound type.)
+File "code/chunk/chunk.ml", line 62, characters 10-36:
+Warning 10: this expression should have type unit.
+File "code/chunk/chunk.ml", line 109, characters 10-92:
+Warning 21: this statement never returns (or has an unsound type.)
+File "code/chunk/chunk.ml", line 116, characters 9-25:
+Warning 10: this expression should have type unit.
+File "code/chunk/chunk.ml", line 134, characters 10-91:
+Warning 21: this statement never returns (or has an unsound type.)
+File "code/chunk/chunk.ml", line 142, characters 9-35:
+Warning 10: this expression should have type unit.
+File "code/chunk/chunk.ml", line 1:
+Error: Could not find the .cmi file for interface code/chunk/chunk.mli.
+Command exited with code 2.
+# Compilation unsuccessful.
