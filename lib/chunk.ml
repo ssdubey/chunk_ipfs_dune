@@ -14,26 +14,26 @@ module Simple =
        IPFS NOTES
 
        echo "���C" | ipfs dag put --input-enc raw
-       zdpuAxKCBsAKQpEw456S49oVDkWJ9PZa44KGRfVBWHiXN3UH8 
+       zdpuAxKCBsAKQpEw456S49oVDkWJ9PZa44KGRfVBWHiXN3UH8
 
-       ipfs block get zdpuAxKCBsAKQpEw456S49oVDkWJ9PZa44KGRfVBWHiXN3UH8 
+       ipfs block get zdpuAxKCBsAKQpEw456S49oVDkWJ9PZa44KGRfVBWHiXN3UH8
 
      *)
 
     type cbor = CBOR.Simple.t
 
-    type hash = string 
-                  
+    type hash = string
+
     type weight = int
-                    
+
     type item = cbor
-                  
+
     type chunk = cbor
-                   
+
     type chunk_pointer = hash
-                           
+
     let ipfs_path = "/usr/local/bin/ipfs"  (*or check with /usr/local/bin//ipfs*)
-        
+
     let hash_len = 49 (* nb chars to represent sha256 hash *)
 
     let ipfs_put_cbor : cbor -> hash = fun c ->
@@ -48,18 +48,18 @@ module Simple =
           Unix.close fd_in1;
           Unix.close fd_out1;
           Unix.close fd_out2;
-          Unix.handle_unix_error Unix.execv ipfs_path ([| ipfs_path; "dag"; "put"; "--input-enc"; "raw"; |]);
+          ignore @@ Unix.handle_unix_error Unix.execv ipfs_path ([| ipfs_path; "dag"; "put"; "--input-enc"; "raw"; |]);
           ())
        | _ -> (
           let out_ch = Unix.out_channel_of_descr fd_out1 in
           output_bytes out_ch b;
           close_out out_ch;
           (match Unix.wait () with
-           | (pid, Unix.WEXITED retcode) -> ()
+           | (_pid, Unix.WEXITED _retcode) -> ()
            | _ -> failwith "ipfs put");
           let buf = Bytes.create hash_len in
           let in_ch = Unix.in_channel_of_descr fd_in2 in
-          input in_ch buf 0 hash_len;
+          ignore (input in_ch buf 0 hash_len);
           close_in in_ch;
           result := Bytes.to_string buf;
           Unix.close fd_in1;
@@ -98,7 +98,7 @@ module Simple =
           ()));
       ! result
          *)
-        
+
     let ipfs_get_nb_bytes_of_cbor : hash -> int = fun h ->
       let result = ref 0 in
       let (fd_in, fd_out) = Unix.pipe() in
@@ -106,14 +106,14 @@ module Simple =
        | 0 -> (
           Unix.dup2 fd_out Unix.stdout;
           Unix.close fd_out;
-          Unix.handle_unix_error Unix.execv ipfs_path ([| ipfs_path; "block"; "stat"; h; |]);
+          ignore @@ Unix.handle_unix_error Unix.execv ipfs_path ([| ipfs_path; "block"; "stat"; h; |]);
           ())
        | _ -> (
          (match Unix.wait () with
-           | (pid, Unix.WEXITED retcode) -> ()
+           | (_pid, Unix.WEXITED _retcode) -> ()
            | _ -> failwith "ipfs get");
          let in_ch = Unix.in_channel_of_descr fd_in in
-         input_line in_ch; (* discard first line *)
+         ignore @@ input_line in_ch; (* discard first line *)
          let l = input_line in_ch in
          let spos = String.length "Size: " in
          let v = String.sub l spos (String.length l - spos) in
@@ -131,15 +131,15 @@ module Simple =
        | 0 -> (
           Unix.dup2 fd_out Unix.stdout;
           Unix.close fd_out;
-          Unix.handle_unix_error Unix.execv ipfs_path ([| ipfs_path; "block"; "get"; h; |]);
+          ignore @@ Unix.handle_unix_error Unix.execv ipfs_path ([| ipfs_path; "block"; "get"; h; |]);
           ())
        | _ -> (
          (match Unix.wait () with
-           | (pid, Unix.WEXITED retcode) -> ()
+           | (_pid, Unix.WEXITED _retcode) -> ()
            | _ -> failwith "ipfs get");
          let buf = Bytes.create nb_bytes in
          let in_ch = Unix.in_channel_of_descr fd_in in
-         input in_ch buf 0 nb_bytes;
+         ignore @@ input in_ch buf 0 nb_bytes;
          close_in in_ch;
          result := CBOR.Simple.decode buf;
          ()));
@@ -151,9 +151,9 @@ module Simple =
 
     let contents_of_chunk c =
       match c with
-      | `Map [ (`Text weight_key, `Int w);      (`Text contents_key, `Array xs); ] ->
+      | `Map [ (`Text _weight_key, `Int w);      (`Text _contents_key, `Array xs); ] ->
           (w, xs)
-      | `Map [ (`Text contents_key, `Array xs); (`Text weight_key, `Int w); ] ->
+      | `Map [ (`Text contents_key, `Array xs); (`Text _weight_key, `Int w); ] ->
           (w, xs)
       | _ -> assert false
 
@@ -171,7 +171,7 @@ module Simple =
 
     let mk_link h =
       `Link h
-        
+
     let weight_of_item x =
       match x with
       | `Int _ ->
@@ -181,7 +181,7 @@ module Simple =
          weight_of_chunk l
       | _ ->
          assert false
-            
+
     let create : chunk =
       mk_chunk 0 []
 
@@ -190,13 +190,13 @@ module Simple =
       let w' = w + weight_of_item x in
       let xs' = List.append xs [x] in
       mk_chunk w' xs'
-        
+
     let push_front c x =
       let (w, xs) = contents_of_chunk c in
       let w' = w + weight_of_item x in
       let xs' = x :: xs in
       mk_chunk w' xs'
-        
+
     let pop_back c =
       let (w, xs) = contents_of_chunk c in
       let sx = List.rev xs in
@@ -206,7 +206,7 @@ module Simple =
           let xs' = List.rev sx' in
           (mk_chunk w' xs', x)
       | _ -> assert false
-            
+
     let pop_front c =
       let (w, xs) = contents_of_chunk c in
       match xs with
@@ -225,7 +225,7 @@ module Simple =
     let sigma xs =
       let ws = List.map weight_of_item xs in
       List.fold_left (fun x y -> x + y) 0 ws
-               
+
     let split (c, i) =
       let rec f (sx, xs, w) =
         match xs with
