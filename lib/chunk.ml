@@ -153,7 +153,7 @@ module Simple =
       match c with
       | `Map [ (`Text _weight_key, `Int w);      (`Text _contents_key, `Array xs); ] ->
           (w, xs)
-      | `Map [ (`Text contents_key, `Array xs); (`Text _weight_key, `Int w); ] ->
+      | `Map [ (`Text _contents_key, `Array xs); (`Text _weight_key, `Int w); ] ->
           (w, xs)
       | _ -> assert false
 
@@ -191,6 +191,14 @@ module Simple =
       let xs' = List.append xs [x] in
       mk_chunk w' xs'
 
+   (* let push_back x =
+      let a : weight = 1 in
+      let b = [`Int 2] in
+      let (w, xs) = (a,b) in      (*contents_of_chunk c in*)
+      let w' = w + weight_of_item x in
+      let xs' = List.append xs [x] in
+      mk_chunk w' xs'
+*)
     let push_front c x =
       let (w, xs) = contents_of_chunk c in
       let w' = w + weight_of_item x in

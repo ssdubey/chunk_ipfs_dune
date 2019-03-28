@@ -1,3 +1,6 @@
-(executable
+(library
  (name chunk)
- (libraries cbor))
+ (libraries cbor unix))
+(env
+ (dev
+  (flags (:standard -warn-error -A))))
